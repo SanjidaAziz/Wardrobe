@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>    
+    <meta charset="utf-8">
+    <title>A Wardrobe by 180204122 & 180204125</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+	<script src="threeJs/three.js"></script>
+	
+	<script>	
+		const canv = document.querySelector("#parent");
+		const sizes = {
+		  width: window.innerWidth,
+		  height: window.innerHeight,
+		};
+		var camlok = {  height: 1,speed: 0.015 };
+		//init function
+		function init() {
+		  	scene = new THREE.Scene();
+		  	camera = new THREE.PerspectiveCamera(85, sizes.width / sizes.height,0.1,1000);
+			  
+			// create an AudioListener and add it to the camera
+			const listener = new THREE.AudioListener();
+			camera.add( listener );
+
+			
+			// load a sound and set it as the Audio object's buffer
+			const audioLoader = new THREE.AudioLoader();
+
+			// create a global audio source
+			const sound_open = new THREE.Audio( listener );
+			audioLoader.load( 'sound/open.mp3', function( buffer ) {
+				sound_open.setBuffer( buffer );
+				sound_open.setLoop( false );
+				sound_open.setVolume( 1 );
+				//sound_open.play();
+			});
+			scene.add(sound_open);
+
+			const sound_close = new THREE.Audio( listener );
+			audioLoader.load( 'sound/close.mp3', function( buffer ) {
+				sound_close.setBuffer( buffer );
+				sound_close.setLoop( false );
+				sound_close.setVolume( 1 );
+				//sound_close.play();
+			});
+			scene.add(sound_close);
+			
+			
+
+
+		  //texture loader
+		  var texture_floor = new THREE.TextureLoader().load("textures/floor.jpg");
+		  var texture_wd = new THREE.TextureLoader().load("textures/mywood.jpg");
+		  var texture_wd_topbtm = new THREE.TextureLoader().load("textures/mywood_topbtm.jpg");
+		  var texture_dr = new THREE.TextureLoader().load("textures/mydraw.jpg");
+		  var texture_extra = new THREE.TextureLoader().load("textures/extra.jpg");
+		  var texture_extra2 = new THREE.TextureLoader().load("textures/extra3.jpg");
+		  
+		  texture_floor.wrapS = THREE.RepeatWrapping;
+		  texture_floor.wrapT = THREE.RepeatWrapping;
+		  texture_floor.repeat.set(120, 120);
+		  //Wardrobe
+		  wardrobe = new THREE.Mesh(
+			new THREE.BoxGeometry(1.6, 2, 0.55),
+			new THREE.MeshPhongMaterial({
+				color: 0x555555,
+				map: texture_wd
+				})
+		  );
+		  scene.add(wardrobe);
+		  wardrobe.position.set(0,1.0,0);
+		  wardrobe.receiveShadow = true;
+		  wardrobe.castShadow = true;
+		  //Drawer 
+			drawer1 = new THREE.Mesh(
+				new THREE.BoxGeometry(1.4, 0.39, 0.55),
+				new THREE.MeshBasicMaterial({
+					color: 0x775555,
+					map: texture_dr
+				})
+			);
+			scene.add(drawer1);
+			drawer1.position.set(0.0,1.7,-0.035);
+		   
+			drawer2 = new THREE.Mesh(
+				new THREE.BoxGeometry(1.4, 0.39,0.55),
+				new THREE.MeshBasicMaterial({
+					color: 0x775555,
+					map: texture_dr
+				})
+			);
+			scene.add(drawer2);
+			drawer2.position.set(0,1.24,-0.035);
+
+			drawer3 = new THREE.Mesh(
+				new THREE.BoxGeometry(1.4, 0.39, 0.55),
+				new THREE.MeshBasicMaterial({
+					color: 0x775555,
+					map: texture_dr
+				})
+			);
+			scene.add(drawer3);
+			drawer3.position.set(0,0.79,-0.035);
+
+			drawer4 = new THREE.Mesh(
+				new THREE.BoxGeometry(1.4, 0.39, 0.55),
+				new THREE.MeshBasicMaterial({
+					color: 0x775555,
+					map: texture_dr
+				})
+			);
+			scene.add(drawer4);
+			drawer4.position.set(0,0.34,-0.035);
+			
+			//bottom
+			bot1 = new THREE.Mesh(
+				new THREE.BoxGeometry(1.8, 0.14, 0.65),
+				new THREE.MeshBasicMaterial({
+							color: 0x775555,
+							map: texture_wd_topbtm
+						
+				})
+			);
+			scene.add(bot1);
+			bot1.position.set(0.0,0,0.0);
+			
+			//Top
+			top1 = new THREE.Mesh(
+				new THREE.BoxGeometry(1.7, 0.03, 0.60),
+				new THREE.MeshBasicMaterial({
+							color: 0x775555,
+							map: texture_wd_topbtm
+						
+				})
+			);
+			scene.add(top1);
+			top1.position.set(0.00,2.0,0);
+
+			extra = new THREE.Mesh(
+				new THREE.BoxGeometry(0.1, 0.1, 0.1),
+				new THREE.MeshBasicMaterial({
+					color: 0xffffff,
+					map: texture_extra
+				})
+			);
+			scene.add(extra);
+			extra.position.set(0.3,2.06,-0.24);
+
+			extra2 = new THREE.Mesh(
+				new THREE.BoxGeometry(0.2, 0.2, 0.05),
+				new THREE.MeshBasicMaterial({
+					color: 0xffffff,
+					map: texture_extra2
+				})
+			);
+			scene.add(extra2);
+			extra2.position.set(-0.12,2.09,-0.25);
+
+		
+			//Floor
+			floor = new THREE.Mesh(
+				new THREE.PlaneGeometry(100, 100),
+				new THREE.MeshPhongMaterial({
+					color: 0xa2afb5,
+					
+					map: texture_floor
+				})
+			);
+			floor.rotation.x -= Math.PI / 2;
+			floor.receiveShadow = true;
+			scene.add(floor);
+
+			
+			wall = new THREE.Mesh(
+				new THREE.BoxGeometry(100, 100),
+				new THREE.MeshPhongMaterial({
+					color: 0xa2afb5,
+					
+					map: texture_floor
+				})
+			);
+			wall.position.set(5,5, 5);
+			wall.rotation.z = (90 * Math.PI) / 180;
+			wall.receiveShadow = true; //default
+			scene.add(wall);
+			
+		    //AmbientLight
+		    ambientLight = new THREE.AmbientLight(0xffffff, 1);
+		    scene.add(ambientLight);
+		    //pointLight
+		    light = new THREE.PointLight(0xffffff, 1, 100);
+		    light.position.set(0, 3, 0);
+		    light.castShadow = true;
+		    light.shadow.camera.near = 1; 
+		    light.shadow.camera.far = 1; 
+		    light.shadowMapWidth = 1024; 
+		    light.shadowMapHeight = 1024;
+		    light.shadow.mapSize.width = 1024;
+		    light.shadow.mapSize.height = 1024;
+
+		    scene.add(light);
+		    //camera
+		    camera.position.set(0, camlok.height, -1.8);
+		    camera.lookAt(0, camlok.height, 0);
+			
+		    //renderer
+		    renderer = new THREE.WebGLRenderer({ antialias: true });
+		    renderer.setSize(sizes.width, sizes.height);
+		    renderer.setPixelRatio(window.devicePixelRatio);
+		    renderer.shadowMap.enabled = true;
+		    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+		    renderer.setClearColor(0xa2afb5);
+		    document.body.appendChild(renderer.domElement);
+		  
+
+		    resizeRendererToDisplaySize(renderer);
+			
+			const canvas = renderer.domElement;
+			camera.aspect = canvas.clientWidth / canvas.clientHeight;
+			camera.updateProjectionMatrix();
+
+		    animate();
+		}
+
+		function resizeRendererToDisplaySize(renderer) {
+		  const canvas = renderer.domElement;
+		  const width = canvas.clientWidth;
+		  const height = canvas.clientHeight;
+		  const needResize = canvas.width !== width || canvas.height !== height;
+		  if (needResize)
+			renderer.setSize(width, height, false);
+		  return needResize;
+		}
+
+		var keyboard = {}, degree = 0, click = 0;
+		function animate() {
+			setTimeout( function() {requestAnimationFrame( animate );}, 1000/100 );
+			//Up Arrow
+			if (keyboard[38]) {
+				camera.position.x -= Math.sin(camera.rotation.y) * camlok.speed;
+				camera.position.z -= -Math.cos(camera.rotation.y) * camlok.speed;
+			}
+			//Down Arrow
+			if (keyboard[40]) {
+				camera.position.x += Math.sin(camera.rotation.y) * camlok.speed;
+				camera.position.z += -Math.cos(camera.rotation.y) * camlok.speed;
+			}
+			//left Arrow
+			if (keyboard[37]) {
+				camera.position.x += Math.sin(camera.rotation.y + Math.PI / 2) * camlok.speed;
+				camera.position.z += -Math.cos(camera.rotation.y + Math.PI / 2) * camlok.speed;
+			}
+			//Right Arrow
+			if (keyboard[39]) {
+				camera.position.x += Math.sin(camera.rotation.y - Math.PI / 2) * camlok.speed;
+				camera.position.z += -Math.cos(camera.rotation.y - Math.PI / 2) * camlok.speed;
+			}
+			//Left turn(l)
+			if (keyboard[76]) {
+				camera.rotation.y -= Math.PI * 0.01;
+			}
+			//Right turn(r)
+			if (keyboard[82]) {
+				camera.rotation.y += Math.PI * 0.01;
+			}
+			//lightAnimation
+			if (degree <= 360) {
+				degree -= 0.5;
+			} 
+			else {
+				degree = 0;
+			}
+			light.position.x = Math.sin(degree * Math.PI / 180) * 5;
+			light.position.z = Math.cos(degree * Math.PI / 180) * 5;
+
+			renderer.render(scene, camera);
+		}
+
+		function keyDown(event) {
+		  keyboard[event.keyCode] = true;
+		}
+
+		function keyUp(event) {
+		  keyboard[event.keyCode] = false;
+		}
+
+		function onClick(event) {			
+			if (click < 8) 
+				click += 1;
+			else
+				click = 1;
+			//texture loader
+			var texture_wd = new THREE.TextureLoader().load("textures/mywood.jpg");
+			
+			var texture_dr2 = new THREE.TextureLoader().load("textures/mydraw.jpg");
+
+			
+
+			
+			switch (click) {
+				case 1:
+					
+					drawer = new THREE.Mesh(
+						new THREE.BoxGeometry(1.39, 0.38, 0.58),
+						new THREE.MeshBasicMaterial({
+							color: 0x775555,
+							map: texture_dr2
+						})
+					);
+					drawer.name="drawer";
+					scene.add(drawer);
+					drawer.position.set(0.0,1.7,-0.30);					
+					//sound_open.play();
+					break;
+				case 2:
+					scene.remove(scene.getObjectByName('drawer'));
+					//sound_close.play();
+					break;
+				case 3:
+					drawer = new THREE.Mesh(
+						new THREE.BoxGeometry(1.40, 0.37, 0.58),
+						new THREE.MeshBasicMaterial({
+							color: 0x775555,
+							map: texture_dr2
+						})
+					);
+					drawer.name="drawer";
+					scene.add(drawer);
+					drawer.position.set(0,1.24,-0.30);
+					
+					break;
+				case 4:
+					scene.remove(scene.getObjectByName('drawer'));
+					break;
+				case 5:
+					drawer = new THREE.Mesh(
+						new THREE.BoxGeometry(1.38, 0.37, 0.58),
+						new THREE.MeshBasicMaterial({
+							color: 0x775555,
+							map: texture_dr2
+						})
+					);
+					drawer.name="drawer";
+					scene.add(drawer);
+					drawer.position.set(0.0,0.79,-0.25);
+					break;
+				case 6:
+					scene.remove(scene.getObjectByName('drawer'));
+					break;
+				case 7:
+					drawer = new THREE.Mesh(
+						new THREE.BoxGeometry(1.4, 0.37, 0.58),
+						new THREE.MeshBasicMaterial({
+							color: 0x775555,
+							map: texture_dr2
+						})
+					);
+					drawer.name="drawer";
+					scene.add(drawer);
+					drawer.position.set(0.0,0.38,-0.25);
+					break;
+				case 8:
+					scene.remove(scene.getObjectByName('drawer'));
+					break;
+				default:
+			}
+			if (click %2 ==1)
+			{
+				sound_open.play();
+			}	
+			else{
+				sound_close.play();
+				
+			}	
+		}
+	//eventListener
+	window.addEventListener('keydown', keyDown);
+	window.addEventListener('keyup', keyUp);
+	window.addEventListener('click', onClick);
+	window.onload = init;
+</script>   
+</body>
+</html>
